@@ -41,3 +41,36 @@ class AutomatoFinito:
                 fila.append((prox, pos))
 
         return False
+def executar_testes(automato_path, testes_path, saida_path):
+    automato = AutomatoFinito(automato_path)
+
+    with open(testes_path, 'r') as f:
+        linhas = [linha.strip() for linha in f if linha.strip()]
+
+    resultados = []
+
+    for linha in linhas:
+        cadeia, esperado = linha.split(';')
+        esperado = int(esperado)
+
+        inicio = time.time()
+        obtido = 1 if automato.reconhecer(cadeia) else 0
+        fim = time.time()
+        duracao = round(fim - inicio, 5)
+
+        resultados.append(f"{cadeia};{esperado};{obtido};{duracao}")
+
+    with open(saida_path, 'w') as f:
+        f.write("\n".join(resultados))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Uso: python simulador.py <arquivo_automato.aut> <arquivo_testes.in> <arquivo_saida.out>")
+        sys.exit(1)
+
+    arquivo_aut = sys.argv[1]
+    arquivo_in = sys.argv[2]
+    arquivo_out = sys.argv[3]
+
+    executar_testes(arquivo_aut, arquivo_in, arquivo_out)
